@@ -7,6 +7,7 @@ use App\Models\Plugin;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use PhpParser\Node\Stmt\TryCatch;
 use stdClass;
 
 /**
@@ -18,160 +19,164 @@ use stdClass;
  * @license     https://www.gnu.org/licenses/gpl-3.0.txt
  * @version     0.0.1
  */
-class DevicePaths
-{
-    const PLUGIN = 'DevicePaths';
-    const TITLE = 'Device Path';
-    const AUTHOR = 'Daryl Peterson';
-    const PATH_KEY = 'DEVP_';
-    const PATH_BUILD = 'DEVP_BUILD';
-    const BUILD_INTERVAL = 12;
-    const PATH_BUILD_TIME = 'DEVP_BUILD_TIME';
-    const VER = '0.0.1';
+class DevicePaths {
 
-    public $startTime;
-    public $stopTime;
+	const PLUGIN          = 'DevicePaths';
+	const TITLE           = 'Device Path';
+	const AUTHOR          = 'Daryl Peterson';
+	const PATH_KEY        = 'DEVP_';
+	const PATH_BUILD      = 'DEVP_BUILD';
+	const BUILD_INTERVAL  = 12;
+	const PATH_BUILD_TIME = 'DEVP_BUILD_TIME';
+	const VER             = '0.0.1';
 
-    public function __construct()
-    {
-        $plugin = self::getPlugin();
-        $exist = true;
-        if (! isset($plugin->settings)) {
-            $exist = false;
-        }
+	public $startTime;
+	public $stopTime;
 
-        $settings = $plugin->settings;
-        if (! isset($settings['interval'])) {
-            $exist = false;
-        }
+	public function __construct() {
+		$plugin = self::getPlugin();
+		$exist  = true;
+		if ( ! isset( $plugin->settings ) ) {
+			$exist = false;
+		}
 
-        if (! $exist) {
-            $plugin->settings = [
-                'interval'=>self::BUILD_INTERVAL,
-                'force_build'=>null,
-            ];
+		$settings = $plugin->settings;
+		if ( ! isset( $settings['interval'] ) ) {
+			$exist = false;
+		}
 
-            $plugin->save();
-        }
-    }
+		if ( ! $exist ) {
+			$plugin->settings = array(
+				'interval'    => self::BUILD_INTERVAL,
+				'force_build' => null,
+			);
 
-    public static function getInfo()
-    {
-        return [
-            'name'=>self::PLUGIN,
-            'title'=> self::TITLE,
-            'author'=>self::AUTHOR,
-            'build'=>self::PATH_BUILD_TIME,
-            'ver'=>self::VER,
-            'settings'=>route('plugin.settings', self::PLUGIN),
-            'plugin'=>self::getPlugin(),
-        ];
-    }
+			$plugin->save();
+		}
+	}
 
-    public function doBuild()
-    {
-        $start = microtime(true);
-        $devices = Device::get();
-        $plugin = self::getPlugin();
-        $settings = $plugin->settings;
+	/**
+	 *
+	 * @return array{name: 'DevicePaths', title: 'Device Path', author: 'Daryl Peterson', build: 'DEVP_BUILD_TIME', ver: '0.0.1', settings: mixed, plugin: mixed}
+	 *
+	 * @todo Something
+	 */
+	public static function getInfo() {
+		return array(
+			'name'     => self::PLUGIN,
+			'title'    => self::TITLE,
+			'author'   => self::AUTHOR,
+			'build'    => self::PATH_BUILD_TIME,
+			'ver'      => self::VER,
+			'settings' => route( 'plugin.settings', self::PLUGIN ),
+			'plugin'   => self::getPlugin(),
+		);
+	}
 
-        foreach ($devices as $device) {
-            $this->getPath($device->device_id, true);
-        }
+	public function doBuild() {
 
-        $stop = microtime(true);
-        $duration = $stop - $start;
+		try {
+			$start    = microtime( true );
+			$devices  = Device::get();
+			$plugin   = self::getPlugin();
+			$settings = $plugin->settings;
 
-        Cache::add(self::PATH_BUILD, self::VER, now()->addHours($settings['interval']));
-        Cache::forever(self::PATH_BUILD_TIME, $duration);
+			foreach ( $devices as $device ) {
+				$this->getPath( $device->device_id, true );
+			}
 
-        $settings['force_build'] = null;
-        $plugin->settings = $settings;
-        $plugin->save();
+			$stop     = microtime( true );
+			$duration = $stop - $start;
 
-        Log::error('PATH BUILD : ' . $duration, $plugin->settings);
-    }
+			$interval = (int) $settings['interval'];
 
-    public function checkBuild()
-    {
-        $build = Cache::get(self::PATH_BUILD);
+			Cache::add( self::PATH_BUILD, self::VER, now()->addHours( $interval ) );
+			Cache::forever( self::PATH_BUILD_TIME, $duration );
 
-        if (! isset($build)) {
-            Log::error('DO BUILD 1');
-            $this->doBuild();
-        }
+			$settings['force_build'] = null;
+			$plugin->settings        = $settings;
+			$plugin->save();
 
-        $plugin = self::getPlugin();
-        if ($plugin->settings['force_build']) {
-            Log::error('DO BUILD 2', [$plugin]);
-            $this->doBuild();
-        }
-    }
+		} catch ( \Throwable $th ) {
+			Log::error( 'PATH BUILD ERROR: ' . $th->getMessage(), array( 'exception' => $th ) );
+		}
+	}
 
-    public function getLocalName(stdClass $record):string
-    {
-        if (! isset($record->local_hostname)) {
-            $host_name = '';
-        }
-        if (! isset($record->local_sysName)) {
-            $sys_name = '';
-        }
-        $host_name = $record->local_hostname;
-        $sys_name = $record->local_sysName;
+	public function checkBuild() {
+		$build = Cache::get( self::PATH_BUILD );
 
-        if (strlen($sys_name) > strlen($host_name)) {
-            return $sys_name;
-        }
+		if ( ! isset( $build ) ) {
+			$this->doBuild();
+		}
 
-        return $host_name;
-    }
+		$plugin = self::getPlugin();
+		if ( $plugin->settings['force_build'] ) {
+			Log::error( 'DO BUILD 2', array( $plugin ) );
+			$this->doBuild();
+		}
+	}
 
-    public function getPath(int $id, bool $force = false)
-    {
-        $keyCache = self::PATH_KEY . $id;
+	public function getLocalName( stdClass $record ): string {
+		if ( ! isset( $record->local_hostname ) ) {
+			$host_name = '';
+		}
+		if ( ! isset( $record->local_sysName ) ) {
+			$sys_name = '';
+		}
+		$host_name = $record->local_hostname;
+		$sys_name  = $record->local_sysName;
 
-        if (! $force) {
-            $path = Cache::get($keyCache);
-            if (is_array($path)) {
-                return $path;
-            }
-        }
+		if ( strlen( $sys_name ) > strlen( $host_name ) ) {
+			return $sys_name;
+		}
 
-        $relations = DB::table('device_relationships', 'M')
-        ->join('devices as D1', 'M.child_device_id', '=', 'D1.device_id', 'inner')
-        ->join('devices as D2', 'M.parent_device_id', '=', 'D2.device_id', 'inner')
-        ->select('M.child_device_id AS local_device_id', 'D1.os AS local_os', 'D1.hostname AS local_hostname', 'D1.sysName AS local_sysName', 'M.parent_device_id AS remote_device_id', 'D2.os AS remote_os', 'D2.hostname AS remote_hostname', 'D2.sysName AS remote_sysName')
-        ->orderBy('D1.device_id')
-        ->get();
+		return $host_name;
+	}
 
-        $sorted = [];
-        $path = [];
+	public function getPath( int $id, bool $force = false ) {
+		$keyCache = self::PATH_KEY . $id;
 
-        foreach ($relations as $item) {
-            $key = $item->local_device_id;
-            $sorted[$key] = $item;
-        }
+		if ( ! $force ) {
+			$path = Cache::get( $keyCache );
+			if ( is_array( $path ) ) {
+				return $path;
+			}
+		}
 
-        $done = false;
-        while (! $done) {
-            if (! isset($sorted[$id])) {
-                $done = true;
-                break;
-            }
+		$relations = DB::table( 'device_relationships', 'M' )
+		->join( 'devices as D1', 'M.child_device_id', '=', 'D1.device_id', 'inner' )
+		->join( 'devices as D2', 'M.parent_device_id', '=', 'D2.device_id', 'inner' )
+		->select( 'M.child_device_id AS local_device_id', 'D1.os AS local_os', 'D1.hostname AS local_hostname', 'D1.sysName AS local_sysName', 'M.parent_device_id AS remote_device_id', 'D2.os AS remote_os', 'D2.hostname AS remote_hostname', 'D2.sysName AS remote_sysName' )
+		->orderBy( 'D1.device_id' )
+		->get();
 
-            $name = $this->getLocalName($sorted[$id]);
-            $path[$name] = $id;
+		$sorted = array();
+		$path   = array();
 
-            $id = $sorted[$id]->remote_device_id;
-        }
+		foreach ( $relations as $item ) {
+			$key            = $item->local_device_id;
+			$sorted[ $key ] = $item;
+		}
 
-        Cache::forever($keyCache, $path);
+		$done = false;
+		while ( ! $done ) {
+			if ( ! isset( $sorted[ $id ] ) ) {
+				$done = true;
+				break;
+			}
 
-        return $path;
-    }
+			$name          = $this->getLocalName( $sorted[ $id ] );
+			$path[ $name ] = $id;
 
-    private static function getPlugin()
-    {
-        return Plugin::where('plugin_name', self::PLUGIN)->first();
-    }
+			$id = $sorted[ $id ]->remote_device_id;
+		}
+
+		Cache::forever( $keyCache, $path );
+
+		return $path;
+	}
+
+	private static function getPlugin() {
+		return Plugin::where( 'plugin_name', self::PLUGIN )->first();
+	}
 }
