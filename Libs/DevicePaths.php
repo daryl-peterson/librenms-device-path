@@ -59,7 +59,7 @@ class DevicePaths {
 	 *
 	 * @return array{name: 'DevicePaths', title: 'Device Path', author: 'Daryl Peterson', build: 'DEVP_BUILD_TIME', ver: '0.0.1', settings: mixed, plugin: mixed}
 	 *
-	 * @todo Something
+	 * @todo Something awesome
 	 */
 	public static function getInfo() {
 		return array(
