@@ -7,8 +7,8 @@ use App\Models\Plugin;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use PhpParser\Node\Stmt\TryCatch;
 use stdClass;
+
 
 /**
  * Create list of all device parents
@@ -30,9 +30,12 @@ class DevicePaths {
 	const PATH_BUILD_TIME = 'DEVP_BUILD_TIME';
 	const VER             = '0.0.1';
 
-	public $startTime;
-	public $stopTime;
-
+    /**
+     *  Initalize object.
+     *
+     * @return void
+     * @version 1.0.0
+     */
 	public function __construct() {
 		$plugin = self::getPlugin();
 		$exist  = true;
@@ -56,9 +59,11 @@ class DevicePaths {
 	}
 
 	/**
+	 * Get plugin information.
 	 *
 	 * @return array{name: 'DevicePaths', title: 'Device Path', author: 'Daryl Peterson', build: 'DEVP_BUILD_TIME', ver: '0.0.1', settings: mixed, plugin: mixed}
 	 *
+	 * @version 1.0.0
 	 * @todo Something awesome
 	 */
 	public static function getInfo() {
@@ -73,6 +78,13 @@ class DevicePaths {
 		);
 	}
 
+	/**
+	 * Build path for each device.
+	 *
+	 * @return void
+	 *
+	 * @version 1.0.0
+	 */
 	public function doBuild() {
 
 		try {
@@ -102,6 +114,12 @@ class DevicePaths {
 		}
 	}
 
+	/**
+	 * Make sure build is complete.
+	 *
+	 * @version 1.0.0
+	 * @return void
+	 */
 	public function checkBuild() {
 		$build = Cache::get( self::PATH_BUILD );
 
@@ -116,6 +134,12 @@ class DevicePaths {
 		}
 	}
 
+	/**
+	 * Get local device name.
+	 *
+	 * @param stdClass $record
+	 * @return string
+	 */
 	public function getLocalName( stdClass $record ): string {
 		if ( ! isset( $record->local_hostname ) ) {
 			$host_name = '';
@@ -133,7 +157,16 @@ class DevicePaths {
 		return $host_name;
 	}
 
-	public function getPath( int $id, bool $force = false ) {
+	/**
+	 * Get device path
+	 *
+	 * @param integer $id The ID of the device.
+	 * @param boolean $force Regenerate the path if true.
+	 * @return array
+	 *
+	 * @version 1.0.0
+	 */
+	public function getPath( int $id, bool $force = false ): array {
 		$keyCache = self::PATH_KEY . $id;
 
 		if ( ! $force ) {
@@ -176,6 +209,13 @@ class DevicePaths {
 		return $path;
 	}
 
+    /**
+     * Get plugin object model.
+     *
+     * @return mixed
+     *
+     * @version 1.0.0
+     */
 	private static function getPlugin() {
 		return Plugin::where( 'plugin_name', self::PLUGIN )->first();
 	}
