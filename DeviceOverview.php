@@ -27,6 +27,15 @@ GET|HEAD   plugin/{plugin} ............plugin.page › PluginPageController
  */
 class DeviceOverview extends DeviceOverviewHook
 {
+
+    /**
+     * Get device data record.
+     *
+     * @param Device $device
+     * @return array
+     *
+     * @version 1.0.0
+     */
     public function data(Device $device): array
     {
         $dp = new DevicePaths();
