@@ -34,7 +34,7 @@ class DeviceOverview extends DeviceOverviewHook
      * @param Device $device
      * @return array
      *
-     * @version 1.0.0
+     * @version 1.0.1
      */
     public function data(Device $device): array
     {
