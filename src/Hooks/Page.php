@@ -23,17 +23,14 @@
  * @author     Tony Murray <murraytony@gmail.com>
  */
 
-namespace App\Plugins\DevicePaths;
+namespace DRP\DevicePaths;
 
-use App\Plugins\DevicePaths\Libs\DevicePaths;
 use App\Plugins\Hooks\PageHook;
 
-class Page extends PageHook
-{
-    public function data(): array
-    {
+class Page extends PageHook {
+    public function data(): array {
         return [
-            'info'=>DevicePaths::getInfo(),
+            'info' => PluginProvider::getInfo(),
         ];
     }
 }

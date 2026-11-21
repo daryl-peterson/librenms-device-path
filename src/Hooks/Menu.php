@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Plugins\DevicePaths;
+namespace DRP\DevicePaths;
 
-use App\Plugins\DevicePaths\Libs\DevicePaths;
 use App\Plugins\Hooks\MenuEntryHook;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -16,14 +15,12 @@ use Illuminate\Support\Facades\Route;
  * @license     https://www.gnu.org/licenses/gpl-3.0.txt
  * @since       1.0.0
  */
-class Menu extends MenuEntryHook
-{
+class Menu extends MenuEntryHook {
     const TITLE = 'Device Path';
 
-    public function data(): array
-    {
+    public function data(): array {
         return [
-            'title'=>DevicePaths::TITLE,
+            'title' => PluginProvider::TITLE,
         ];
     }
 }

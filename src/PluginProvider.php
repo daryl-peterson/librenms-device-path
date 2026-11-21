@@ -19,7 +19,7 @@ use stdClass;
  * @license     https://www.gnu.org/licenses/gpl-3.0.txt
  * @version     0.0.1
  */
-class DevicePaths {
+class PluginProvider {
 
     const PLUGIN          = 'DevicePaths';
     const TITLE           = 'Device Path';

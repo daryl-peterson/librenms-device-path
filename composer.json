@@ -18,5 +18,15 @@
         "psr-4": {
             "DRP\\DevicePaths\\": "src/"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "DRP\\DevicePaths\\PluginProvider"
+            ],
+            "aliases": {
+                "DevicePaths": "DRP\\DevicePaths\\Facades\\DevicePaths"
+            }
+        }
     }
 }
