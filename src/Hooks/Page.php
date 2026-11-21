@@ -25,7 +25,9 @@
 
 namespace DRP\DevicePaths;
 
+
 use App\Plugins\Hooks\PageHook;
+use DRP\DevicePaths\PluginProvider;
 
 class Page extends PageHook {
     public function data(): array {

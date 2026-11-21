@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Plugins\DevicePaths;
+namespace DRP\DevicePaths;
 
 use App\Models\Device;
-use App\Plugins\DevicePaths\Libs\DevicePaths;
 use App\Plugins\Hooks\DeviceOverviewHook;
+use DRP\DevicePaths\PluginProvider;
 use Illuminate\Support\Facades\Log;
 use stdClass;
 
@@ -25,8 +25,7 @@ GET|HEAD   plugin/{plugin} ............plugin.page › PluginPageController
  * @license     https://www.gnu.org/licenses/gpl-3.0.txt
  * @since       1.0.0
  */
-class DeviceOverview extends DeviceOverviewHook
-{
+class DeviceOverview extends DeviceOverviewHook {
 
     /**
      * Get device data record.
@@ -36,9 +35,8 @@ class DeviceOverview extends DeviceOverviewHook
      *
      * @version 1.0.1
      */
-    public function data(Device $device): array
-    {
-        $dp = new DevicePaths();
+    public function data(Device $device): array {
+        $dp = new PluginProvider();
         $dp->checkBuild();
 
         $rels = $dp->getPath($device->device_id);
@@ -49,11 +47,11 @@ class DeviceOverview extends DeviceOverviewHook
         $groupTree = $tree . $group->id;
 
         return [
-            'title' => DevicePaths::TITLE,
+            'title' => PluginProvider::TITLE,
             'device'  => $device,
-            'device_path'=>$rels,
-            'device_tree'=>$deviceTree,
-            'group_tree'=>$groupTree,
+            'device_path' => $rels,
+            'device_tree' => $deviceTree,
+            'group_tree' => $groupTree,
         ];
     }
 }

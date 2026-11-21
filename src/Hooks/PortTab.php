@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Plugins\DevicePaths;
+namespace DRP\DevicePaths;
 
 use App\Plugins\Hooks\PortTabHook;
 
-class PortTab extends PortTabHook
-{
+class PortTab extends PortTabHook {
 }

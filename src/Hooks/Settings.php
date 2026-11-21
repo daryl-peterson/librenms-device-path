@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Plugins\DevicePaths;
+namespace DRP\DevicePaths;
 
 use App\Plugins\Hooks\SettingsHook;
 
@@ -13,6 +13,5 @@ use App\Plugins\Hooks\SettingsHook;
  * @license     https://www.gnu.org/licenses/gpl-3.0.txt
  * @since       1.0.0
  */
-class Settings extends SettingsHook
-{
+class Settings extends SettingsHook {
 }

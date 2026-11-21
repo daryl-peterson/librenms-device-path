@@ -2,6 +2,7 @@
 
 namespace DRP\DevicePaths;
 
+use DRP\DevicePaths\PluginProvider;
 use App\Plugins\Hooks\MenuEntryHook;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
