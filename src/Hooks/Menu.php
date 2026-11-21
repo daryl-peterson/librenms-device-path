@@ -1,6 +1,6 @@
 <?php
 
-namespace DRP\DevicePaths;
+namespace DRP\DevicePaths\Hooks;
 
 use DRP\DevicePaths\PluginProvider;
 use App\Plugins\Hooks\MenuEntryHook;

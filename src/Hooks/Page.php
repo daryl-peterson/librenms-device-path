@@ -11,7 +11,7 @@
  * @since       1.0.0
  */
 
-namespace DRP\DevicePaths;
+namespace DRP\DevicePaths\Hooks;
 
 
 use App\Plugins\Hooks\PageHook;

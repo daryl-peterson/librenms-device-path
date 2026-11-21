@@ -1,6 +1,6 @@
 <?php
 
-namespace DRP\DevicePaths;
+namespace DRP\DevicePaths\Hooks;
 
 use App\Plugins\Hooks\PortTabHook;
 

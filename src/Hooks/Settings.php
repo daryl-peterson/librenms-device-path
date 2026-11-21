@@ -1,8 +1,9 @@
 <?php
 
-namespace DRP\DevicePaths;
+namespace DRP\DevicePaths\Hooks;
 
 use App\Plugins\Hooks\SettingsHook;
+use DRP\DevicePaths\PluginProvider;
 
 
 /**
@@ -16,4 +17,7 @@ use App\Plugins\Hooks\SettingsHook;
  * @since       0.0.1
  */
 class Settings extends SettingsHook {
+    public function data(array $settings): array {
+        return parent::data(PluginProvider::withDefaultSettings($settings));
+    }
 }

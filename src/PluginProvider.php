@@ -18,7 +18,14 @@ use App\Models\Plugin;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\ServiceProvider;
+use LibreNMS\Interfaces\Plugins\Hooks\DeviceOverviewHook;
+use LibreNMS\Interfaces\Plugins\Hooks\MenuEntryHook;
+use LibreNMS\Interfaces\Plugins\Hooks\PortTabHook;
+use LibreNMS\Interfaces\Plugins\Hooks\SettingsHook;
+use LibreNMS\Interfaces\Plugins\Hooks\SinglePageHook;
+use LibreNMS\Interfaces\Plugins\PluginManagerInterface;
+use stdClass;
 
 /**
  * LibreNMS Device Paths Plugin Service Provider.
@@ -30,7 +37,7 @@ use Illuminate\Support\Facades\Log;
  * @link        https://github.com/daryl-peterson/
  * @since       0.0.1
  */
-class PluginProvider {
+class PluginProvider extends ServiceProvider {
 
     const PLUGIN          = 'DevicePaths';
     const TITLE           = 'Device Path';
@@ -41,32 +48,27 @@ class PluginProvider {
     const PATH_BUILD_TIME = 'DEVP_BUILD_TIME';
     const VER             = '0.0.1';
 
-    /**
-     *  Initalize object.
-     *
-     * @return void
-     * @version 1.0.0
-     */
-    public function __construct() {
-        $plugin = self::getPlugin();
-        $exist  = true;
-        if (! isset($plugin->settings)) {
-            $exist = false;
-        }
+    private const DEFAULT_SETTINGS = [
+        'interval' => self::BUILD_INTERVAL,
+        'force_build' => null,
+    ];
 
-        $settings = $plugin->settings;
-        if (! isset($settings['interval'])) {
-            $exist = false;
-        }
+    public function boot(PluginManagerInterface $manager): void {
+        $manager->publishHook(self::PLUGIN, DeviceOverviewHook::class, Hooks\DeviceOverview::class);
+        $manager->publishHook(self::PLUGIN, MenuEntryHook::class, Hooks\Menu::class);
+        $manager->publishHook(self::PLUGIN, SinglePageHook::class, Hooks\Page::class);
+        $manager->publishHook(self::PLUGIN, PortTabHook::class, Hooks\PortTab::class);
+        $manager->publishHook(self::PLUGIN, SettingsHook::class, Hooks\Settings::class);
 
-        if (! $exist) {
-            $plugin->settings = array(
-                'interval'    => self::BUILD_INTERVAL,
-                'force_build' => null,
-            );
-
-            $plugin->save();
+        if ($manager->pluginEnabled(self::PLUGIN)) {
+            $this->loadViewsFrom(dirname(__DIR__), self::PLUGIN);
         }
+    }
+
+    public static function withDefaultSettings(array $settings): array {
+        $settings['interval'] ??= self::DEFAULT_SETTINGS['interval'];
+
+        return $settings + self::DEFAULT_SETTINGS;
     }
 
     /**
@@ -99,12 +101,15 @@ class PluginProvider {
     public function doBuild() {
 
         try {
-            $start    = microtime(true);
-            $devices  = Device::get();
-            $plugin   = self::getPlugin();
-            $settings = $plugin->settings;
+            $plugin = self::getPlugin();
+            if ($plugin === null || ! $plugin->plugin_active) {
+                return;
+            }
 
-            foreach ($devices as $device) {
+            $start = microtime(true);
+            $settings = self::withDefaultSettings((array) $plugin->settings);
+
+            foreach (Device::get() as $device) {
                 $this->getPath($device->device_id, true);
             }
 
@@ -133,13 +138,8 @@ class PluginProvider {
     public function checkBuild() {
         $build = Cache::get(self::PATH_BUILD);
 
-        if (! isset($build)) {
-            $this->doBuild();
-        }
-
         $plugin = self::getPlugin();
-        if ($plugin->settings['force_build']) {
-            Log::error('DO BUILD 2', array($plugin));
+        if ($plugin?->plugin_active && ($build === null || ! empty($plugin->settings['force_build']))) {
             $this->doBuild();
         }
     }
@@ -151,14 +151,8 @@ class PluginProvider {
      * @return string
      */
     public function getLocalName(stdClass $record): string {
-        if (! isset($record->local_hostname)) {
-            $host_name = '';
-        }
-        if (! isset($record->local_sysName)) {
-            $sys_name = '';
-        }
-        $host_name = $record->local_hostname;
-        $sys_name  = $record->local_sysName;
+        $host_name = $record->local_hostname ?? '';
+        $sys_name  = $record->local_sysName ?? '';
 
         if (strlen($sys_name) > strlen($host_name)) {
             return $sys_name;
@@ -201,14 +195,10 @@ class PluginProvider {
             $sorted[$key] = $item;
         }
 
-        $done = false;
-        while (! $done) {
-            if (! isset($sorted[$id])) {
-                $done = true;
-                break;
-            }
-
-            $name          = $this->getLocalName($sorted[$id]);
+        $visited = [];
+        while (isset($sorted[$id]) && ! isset($visited[$id])) {
+            $visited[$id] = true;
+            $name = $this->getLocalName($sorted[$id]);
             $path[$name] = $id;
 
             $id = $sorted[$id]->remote_device_id;
@@ -222,11 +212,11 @@ class PluginProvider {
     /**
      * Get plugin object model.
      *
-     * @return mixed
+     * @return Plugin|null
      *
      * @version 1.0.0
      */
-    private static function getPlugin() {
-        return Plugin::where('plugin_name', self::PLUGIN)->first();
+    private static function getPlugin(): ?Plugin {
+        return Plugin::versionTwo()->where('plugin_name', self::PLUGIN)->first();
     }
 }

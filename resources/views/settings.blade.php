@@ -28,7 +28,7 @@
 
                             <label for="value-force_build"><strong>Force Build</strong></label>
                             <select id="value-force_build" name="settings[force_build]" class="form-control" class="form-control">
-                                @if (!isset($settings['force_build']))
+                                @if (empty($settings['force_build']))
                                     <option value="0" selected>Off</option>
                                     <option value="1">On</option>
                                 @else

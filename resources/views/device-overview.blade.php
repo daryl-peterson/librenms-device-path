@@ -26,7 +26,9 @@
                             </tbody>
                         </table>
                         <a href="{{ $device_tree }}" target="_blank" class="btn btn-primary">Device Tree</a>
-                        <a href="{{ $group_tree }}" target="_blank" class="btn btn-primary">Group Tree</a>
+                        @if ($group_tree !== null)
+                            <a href="{{ $group_tree }}" target="_blank" class="btn btn-primary">Group Tree</a>
+                        @endif
                     </div>
 
                 </div>

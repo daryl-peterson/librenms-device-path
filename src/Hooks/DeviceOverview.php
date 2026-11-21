@@ -1,6 +1,6 @@
 <?php
 
-namespace DRP\DevicePaths;
+namespace DRP\DevicePaths\Hooks;
 
 use App\Models\Device;
 use App\Plugins\Hooks\DeviceOverviewHook;
@@ -28,15 +28,16 @@ class DeviceOverview extends DeviceOverviewHook {
      * @version 1.0.1
      */
     public function data(Device $device): array {
-        $dp = new PluginProvider();
+        $dp = new PluginProvider(app());
         $dp->checkBuild();
+
 
         $rels = $dp->getPath($device->device_id);
         $group = $device->groups()->first();
 
         $tree = url('/') . '/maps/devicedependency?group=';
         $deviceTree = $tree . '&highlight_node=' . $device->device_id . '&showparentdevicepath=1';
-        $groupTree = $tree . $group->id;
+        $groupTree = $group === null ? null : $tree . $group->id;
 
         return [
             'title' => PluginProvider::TITLE,
