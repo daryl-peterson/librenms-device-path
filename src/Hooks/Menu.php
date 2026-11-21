@@ -4,16 +4,16 @@ namespace DRP\DevicePaths;
 
 use DRP\DevicePaths\PluginProvider;
 use App\Plugins\Hooks\MenuEntryHook;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Route;
+
 
 /**
- * Class description
+ * Menu Hook for Device Paths Plugin
  *
- * @category
+ * @package     librenms-device-paths
  * @author      Daryl Peterson <@gmail.com>
- * @copyright   Copyright (c) 2020, Daryl Peterson
- * @license     https://www.gnu.org/licenses/gpl-3.0.txt
+ * @copyright   Copyright (c) 2026, Daryl Peterson
+ * @license     https://opensource.org MIT License
+ * @link        https://github.com/daryl-peterson/librenms-device-paths
  * @since       1.0.0
  */
 class Menu extends MenuEntryHook {

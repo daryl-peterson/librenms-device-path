@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * LibreNMS Device Paths Plugin Service Provider.
+ *
+ * @package     librenms-device-paths
+ * @author      Daryl Peterson <@gmail.com>
+ * @copyright   Copyright (c) 2026, Daryl Peterson
+ * @license     https://opensource.org MIT License
+ * @link        https://github.com/daryl-peterson/
+ * @since       0.0.1
+ */
+
 namespace DRP\DevicePaths;
 
 use App\Models\Device;
@@ -7,17 +18,17 @@ use App\Models\Plugin;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use stdClass;
 
 
 /**
- * Create list of all device parents
+ * LibreNMS Device Paths Plugin Service Provider.
  *
- * @category
+ * @package     librenms-device-paths
  * @author      Daryl Peterson <@gmail.com>
- * @copyright   Copyright (c) 2020, Daryl Peterson
- * @license     https://www.gnu.org/licenses/gpl-3.0.txt
- * @version     0.0.1
+ * @copyright   Copyright (c) 2026, Daryl Peterson
+ * @license     https://opensource.org MIT License
+ * @link        https://github.com/daryl-peterson/
+ * @since       0.0.1
  */
 class PluginProvider {
 

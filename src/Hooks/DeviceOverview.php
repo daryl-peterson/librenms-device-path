@@ -5,25 +5,17 @@ namespace DRP\DevicePaths;
 use App\Models\Device;
 use App\Plugins\Hooks\DeviceOverviewHook;
 use DRP\DevicePaths\PluginProvider;
-use Illuminate\Support\Facades\Log;
-use stdClass;
 
-/*
-GET|HEAD   plugin/settings ............plugin.admin › PluginAdminController
-GET|HEAD   plugin/settings/{plugin} ...plugin.settings › PluginSettingsController
-POST       plugin/settings/{plugin} ...plugin.update › PluginSettingsController@update
-ANY        plugin/v1/{plugin}/{other?} plugin.legacy › PluginLegacyController
-GET|HEAD   plugin/{plugin} ............plugin.page › PluginPageController
-*/
 
 /**
  * DeviceOverview Hook
  *
- * @category
+ * @package     librenms-device-paths
  * @author      Daryl Peterson <@gmail.com>
- * @copyright   Copyright (c) 2020, Daryl Peterson
- * @license     https://www.gnu.org/licenses/gpl-3.0.txt
- * @since       1.0.0
+ * @copyright   Copyright (c) 2026, Daryl Peterson
+ * @license     https://opensource.org MIT License
+ * @link        https://github.com/daryl-peterson/librenms-device-paths
+ * @since       0.0.1
  */
 class DeviceOverview extends DeviceOverviewHook {
 

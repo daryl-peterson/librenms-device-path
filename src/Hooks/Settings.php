@@ -4,14 +4,16 @@ namespace DRP\DevicePaths;
 
 use App\Plugins\Hooks\SettingsHook;
 
+
 /**
- * Class description
+ * Settings Hook for Device Paths Plugin
  *
- * @category
+ * @package     librenms-device-paths
  * @author      Daryl Peterson <@gmail.com>
- * @copyright   Copyright (c) 2020, Daryl Peterson
- * @license     https://www.gnu.org/licenses/gpl-3.0.txt
- * @since       1.0.0
+ * @copyright   Copyright (c) 2026, Daryl Peterson
+ * @license     https://opensource.org MIT License
+ * @link        https://github.com/daryl-peterson/librenms-device-paths
+ * @since       0.0.1
  */
 class Settings extends SettingsHook {
 }
