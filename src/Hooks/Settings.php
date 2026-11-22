@@ -4,6 +4,8 @@ namespace DRP\DevicePaths\Hooks;
 
 use App\Plugins\Hooks\SettingsHook;
 use DRP\DevicePaths\PluginProvider;
+use DRP\DevicePaths\PluginSettings;
+use const DRP\DevicePaths\PLUGIN_NAME;
 
 
 /**
@@ -18,6 +20,9 @@ use DRP\DevicePaths\PluginProvider;
  */
 class Settings extends SettingsHook {
     public function data(array $settings): array {
-        return parent::data(PluginProvider::withDefaultSettings($settings));
+        return parent::data(PluginSettings::forEditing($settings)) + [
+            'info' => PluginProvider::getInfo(),
+            'plugin' => PLUGIN_NAME,
+        ];
     }
 }

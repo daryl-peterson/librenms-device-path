@@ -1,10 +1,12 @@
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-default panel-condensed">
-            <div class="panel-heading">
-                <i class="fa fa-road fa-lg" aria-hidden="true"></i>
-                <strong>{{ $title }}</strong>
+
+            <div class="panel-heading" style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa fa-road fa-2x" aria-hidden="true"></i>
+                <span><strong>{{ $title }}</strong></span>
             </div>
+
             <div class="panel-body">
                 <div class="row">
                     <div class="col-sm-12">

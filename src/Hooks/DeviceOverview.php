@@ -5,6 +5,7 @@ namespace DRP\DevicePaths\Hooks;
 use App\Models\Device;
 use App\Plugins\Hooks\DeviceOverviewHook;
 use DRP\DevicePaths\PluginProvider;
+use const DRP\DevicePaths\PLUGIN_TITLE;
 
 
 /**

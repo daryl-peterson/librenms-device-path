@@ -17,6 +17,7 @@ use LibreNMS\Interfaces\Plugins\Hooks\MenuEntryHook as MenuEntryHookInterface;
 use LibreNMS\Interfaces\Plugins\Hooks\SettingsHook as SettingsHookInterface;
 use LibreNMS\Interfaces\Plugins\Hooks\SinglePageHook;
 use LibreNMS\Interfaces\Plugins\PluginManagerInterface;
+use stdClass;
 
 /**
  * Plugin imports.
@@ -43,7 +44,7 @@ class PluginProvider extends ServiceProvider {
 
     const PATH_KEY        = 'DEVP_';
     const PATH_BUILD      = 'DEVP_BUILD';
-    const BUILD_INTERVAL  = 12;
+    const BUILD_INTERVAL  = 24;
     const PATH_BUILD_TIME = 'DEVP_BUILD_TIME';
 
     private const DEFAULT_SETTINGS = [

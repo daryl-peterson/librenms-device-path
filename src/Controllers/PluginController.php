@@ -22,6 +22,7 @@ use Illuminate\View\View;
 use DRP\DevicePaths\Log;
 use DRP\DevicePaths\TraitHidePrivates;
 use DRP\DevicePaths\PluginData;
+use DRP\DevicePaths\PluginSettings;
 use DRP\DevicePaths\TraitValidateAdmin;
 use const DRP\DevicePaths\PLUGIN_NAME;
 
@@ -71,6 +72,7 @@ class PluginController extends Controller {
         return view("$this->plugin::settings", [
             'info' => $this->info,
             'plugin' => $this->plugin,
+            'settings' => PluginSettings::forEditing($this->info['settings']),
         ]);
     }
 }

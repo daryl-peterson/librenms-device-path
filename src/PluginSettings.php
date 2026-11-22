@@ -54,6 +54,29 @@ class PluginSettings {
         Log::info("Plugin settings loaded.", ['settings' => $this->settings]);
     }
 
+    public static function forEditing(array $settings): array {
+        if (!isset($settings['interval'])) {
+            $query = Plugin::versionTwo()->where('plugin_name', PLUGIN_NAME);
+            $settings = $query->getModel()->getConnection()->transaction(static function () use ($query, $settings): array {
+                $plugin = $query->lockForUpdate()->first();
+                if ($plugin === null) {
+                    return $settings;
+                }
+
+                $settings = (array) $plugin->settings;
+                if (!isset($settings['interval'])) {
+                    $settings['interval'] = PluginProvider::BUILD_INTERVAL;
+                    $plugin->settings = $settings;
+                    $plugin->saveOrFail();
+                }
+
+                return $settings;
+            });
+        }
+
+        return PluginProvider::withDefaultSettings($settings);
+    }
+
     public static function hasSavedDatabase(array $settings): bool {
         return is_array($settings['database_connection'] ?? null);
     }
