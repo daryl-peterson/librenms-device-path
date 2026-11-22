@@ -40,7 +40,7 @@ class DeviceOverview extends DeviceOverviewHook {
         $groupTree = $group === null ? null : $tree . $group->id;
 
         return [
-            'title' => PluginProvider::TITLE,
+            'title' => PLUGIN_TITLE,
             'device'  => $device,
             'device_path' => $rels,
             'device_tree' => $deviceTree,

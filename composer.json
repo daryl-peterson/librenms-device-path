@@ -1,7 +1,7 @@
 {
     "name": "daryl-peterson/librenms-device-path",
     "description": "LibreNMS Plugin for showing device path under the device view",
-    "type": "package",
+    "type": "library",
     "license": "MIT",
     "authors": [
         {
@@ -11,13 +11,16 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": "^8.2",
+        "php": "^8.5",
         "librenms/plugin-interfaces": "^1.0"
     },
     "autoload": {
         "psr-4": {
             "DRP\\DevicePaths\\": "src/"
-        }
+        },
+        "files": [
+            "src/constants.php"
+        ]
     },
     "extra": {
         "laravel": {

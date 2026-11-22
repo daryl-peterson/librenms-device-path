@@ -1,31 +1,29 @@
 <?php
 
-/**
- * LibreNMS Device Paths Plugin Service Provider.
- *
- * @package     librenms-device-paths
- * @author      Daryl Peterson <@gmail.com>
- * @copyright   Copyright (c) 2026, Daryl Peterson
- * @license     https://opensource.org MIT License
- * @link        https://github.com/daryl-peterson/
- * @since       0.0.1
- */
-
 namespace DRP\DevicePaths;
 
-use App\Models\Device;
-use App\Models\Plugin;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+/**
+ * Laravel and application imports.
+ */
+
+
 use Illuminate\Support\ServiceProvider;
 use LibreNMS\Interfaces\Plugins\Hooks\DeviceOverviewHook;
-use LibreNMS\Interfaces\Plugins\Hooks\MenuEntryHook;
-use LibreNMS\Interfaces\Plugins\Hooks\PortTabHook;
-use LibreNMS\Interfaces\Plugins\Hooks\SettingsHook;
+use LibreNMS\Interfaces\Plugins\Hooks\MenuEntryHook as MenuEntryHookInterface;
+use LibreNMS\Interfaces\Plugins\Hooks\SettingsHook as SettingsHookInterface;
 use LibreNMS\Interfaces\Plugins\Hooks\SinglePageHook;
 use LibreNMS\Interfaces\Plugins\PluginManagerInterface;
-use stdClass;
+
+/**
+ * Plugin imports.
+ */
+
+use DRP\DevicePaths\Hooks\DeviceOverview;
+use DRP\DevicePaths\Hooks\Menu;
+use DRP\DevicePaths\Hooks\Page;
+use DRP\DevicePaths\Hooks\Settings;
+use DRP\DevicePaths\Log;
+
 
 /**
  * LibreNMS Device Paths Plugin Service Provider.
@@ -39,29 +37,54 @@ use stdClass;
  */
 class PluginProvider extends ServiceProvider {
 
-    const PLUGIN          = 'DevicePaths';
-    const TITLE           = 'Device Path';
-    const AUTHOR          = 'Daryl Peterson';
     const PATH_KEY        = 'DEVP_';
     const PATH_BUILD      = 'DEVP_BUILD';
     const BUILD_INTERVAL  = 12;
     const PATH_BUILD_TIME = 'DEVP_BUILD_TIME';
-    const VER             = '0.0.1';
 
     private const DEFAULT_SETTINGS = [
         'interval' => self::BUILD_INTERVAL,
         'force_build' => null,
     ];
 
-    public function boot(PluginManagerInterface $manager): void {
-        $manager->publishHook(self::PLUGIN, DeviceOverviewHook::class, Hooks\DeviceOverview::class);
-        $manager->publishHook(self::PLUGIN, MenuEntryHook::class, Hooks\Menu::class);
-        $manager->publishHook(self::PLUGIN, SinglePageHook::class, Hooks\Page::class);
-        $manager->publishHook(self::PLUGIN, PortTabHook::class, Hooks\PortTab::class);
-        $manager->publishHook(self::PLUGIN, SettingsHook::class, Hooks\Settings::class);
+    /**
+     * Register the plugin services.
+     *
+     * @since 0.0.1
+     */
+    public function register(): void {
+        require_once __DIR__ . '/constants.php';
+    }
 
-        if ($manager->pluginEnabled(self::PLUGIN)) {
-            $this->loadViewsFrom(dirname(__DIR__), self::PLUGIN);
+    public function boot(PluginManagerInterface $manager): void {
+        try {
+
+            $pluginName = PLUGIN_NAME;
+
+            /*
+            * Compatibility view path.
+            *
+            * LibreNMS local plugins commonly reference views like:
+            * device-backups::resources.views.page
+            *
+            * Package views can also be referenced as:
+            * device-backups::page
+            */
+            $paths = [
+                __DIR__ . '/..',
+                __DIR__ . '/../resources/views',
+            ];
+            $this->loadViewsFrom($paths, $pluginName);
+            $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+
+            $pluginManager = $this->app->make(PluginManagerInterface::class);
+            $pluginManager->publishHook($pluginName, MenuEntryHookInterface::class, Menu::class);
+            $pluginManager->publishHook($pluginName, SinglePageHook::class, Page::class);
+            $pluginManager->publishHook($pluginName, SettingsHookInterface::class, Settings::class);
+
+            $pluginManager->publishHook($pluginName, DeviceOverviewHook::class, DeviceOverview::class);
+        } catch (\Throwable $th) {
+            Log::error("Error booting plugin: " . $th->getMessage());
         }
     }
 
@@ -81,12 +104,12 @@ class PluginProvider extends ServiceProvider {
      */
     public static function getInfo() {
         return array(
-            'name'     => self::PLUGIN,
-            'title'    => self::TITLE,
-            'author'   => self::AUTHOR,
+            'name'     => PLUGIN_NAME,
+            'title'    => PLUGIN_TITLE,
+            'author'   => PLUGIN_AUTHOR,
             'build'    => self::PATH_BUILD_TIME,
-            'ver'      => self::VER,
-            'settings' => route('plugin.settings', self::PLUGIN),
+            'ver'      => PLUGIN_VER,
+            'settings' => route('plugin.settings', PLUGIN_NAME),
             'plugin'   => self::getPlugin(),
         );
     }
@@ -118,7 +141,7 @@ class PluginProvider extends ServiceProvider {
 
             $interval = (int) $settings['interval'];
 
-            Cache::add(self::PATH_BUILD, self::VER, now()->addHours($interval));
+            Cache::add(self::PATH_BUILD, PLUGIN_VER, now()->addHours($interval));
             Cache::forever(self::PATH_BUILD_TIME, $duration);
 
             $settings['force_build'] = null;
@@ -217,6 +240,6 @@ class PluginProvider extends ServiceProvider {
      * @version 1.0.0
      */
     private static function getPlugin(): ?Plugin {
-        return Plugin::versionTwo()->where('plugin_name', self::PLUGIN)->first();
+        return Plugin::versionTwo()->where('plugin_name', PLUGIN_NAME)->first();
     }
 }
