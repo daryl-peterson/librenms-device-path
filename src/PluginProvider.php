@@ -7,6 +7,10 @@ namespace DRP\DevicePaths;
  */
 
 
+use App\Models\Device;
+use App\Models\Plugin;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use LibreNMS\Interfaces\Plugins\Hooks\DeviceOverviewHook;
 use LibreNMS\Interfaces\Plugins\Hooks\MenuEntryHook as MenuEntryHookInterface;
@@ -97,7 +101,7 @@ class PluginProvider extends ServiceProvider {
     /**
      * Get plugin information.
      *
-     * @return array{name: 'DevicePaths', title: 'Device Path', author: 'Daryl Peterson', build: 'DEVP_BUILD_TIME', ver: '0.0.1', settings: mixed, plugin: mixed}
+     * @return array{name: string, title: string, author: string, image: string, build: string, ver: string, settings: string, plugin: Plugin|null}
      *
      * @version 1.0.0
      * @todo Something awesome
@@ -107,6 +111,7 @@ class PluginProvider extends ServiceProvider {
             'name'     => PLUGIN_NAME,
             'title'    => PLUGIN_TITLE,
             'author'   => PLUGIN_AUTHOR,
+            'image'    => PLUGIN_AUTHOR_IMAGE,
             'build'    => self::PATH_BUILD_TIME,
             'ver'      => PLUGIN_VER,
             'settings' => route('plugin.settings', PLUGIN_NAME),

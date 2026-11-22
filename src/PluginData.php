@@ -75,7 +75,7 @@ class PluginData {
             'title'    => PLUGIN_TITLE,
             'author'   => PLUGIN_AUTHOR,
             'ver'      => PLUGIN_VER,
-            'image'    => 'https://avatars.githubusercontent.com/u/13834451?s=400&u=ff8417db6126da8d9ff82822ea0be5897ad744b3&v=4',
+            'image'    => PLUGIN_AUTHOR_IMAGE,
             'settings' => self::getSettings(),
             /*
             'dbStatus'  => [
