@@ -70,7 +70,7 @@ class PluginProvider extends ServiceProvider {
             $pluginManager = $this->app->make(PluginManagerInterface::class);
             $pluginManager->publishHook($pluginName, MenuEntryHookInterface::class, Menu::class);
             $pluginManager->publishHook($pluginName, SinglePageHook::class, Page::class);
-            $pluginManager->publishHook($pluginName, SettingsHookInterface::class, Settings::class);
+            //$pluginManager->publishHook($pluginName, SettingsHookInterface::class, Settings::class);
             $pluginManager->publishHook($pluginName, DeviceOverviewHook::class, DeviceOverview::class);
         } catch (\Throwable $th) {
             Log::error("Error booting plugin: " . $th->getMessage());
