@@ -16,17 +16,4 @@ use App\Plugins\Hooks\SettingsHook;
  * @since       0.0.1
  */
 class Settings extends SettingsHook {
-
-    /*
-    public function data(array $settings): array {
-        Log::error('Settings data: ', $settings);
-        $result = [
-            'info' => PluginData::getInfo(),
-            //'plugin'   => PluginData::getPluginName(),
-            'settings' => $settings
-        ];
-        Log::error('Settings result: ', $result);
-        return $result;
-    }
-        */
 }

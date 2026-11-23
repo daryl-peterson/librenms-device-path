@@ -57,7 +57,7 @@ class PluginData {
             ],
             'settings' => self::getSettings()
         );
-        Log::error('Plugin info: ', $result);
+        Log::debug('Plugin info: ', $result);
         return $result;
     }
 
