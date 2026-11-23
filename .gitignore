@@ -3,6 +3,7 @@
 .aws
 .codex
 .docs
+.dist
 .DS_Store
 .installed
 .trash
