@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Log as Logger;
 class Log {
     private static array $ignoredClasses = [self::class];
 
+
     // 1. Public API Methods
     public static function info(string $message, mixed $context = null): void {
         self::writeLog('INFO', $message, $context);

@@ -26,7 +26,7 @@ use DRP\DevicePaths\PluginSettings;
  * @copyright   Copyright (c) 2026, Daryl Peterson
  * @license     https://opensource.org MIT License
  * @link        https://github.com/daryl-peterson/
- * @since       0.0.1
+ * @since       0.0.2
  */
 class PluginData {
 
