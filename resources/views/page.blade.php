@@ -1,8 +1,8 @@
 <div style="margin-top:-12px; padding-bottom: 1em;">
-    @includeIf('device-paths::layouts.flash-messages')
+    @includeIf($info['name'] . '::layouts.flash-messages')
 </div>
 @component($info['name'] . '::layouts.panel')
-    @includeIf('device-paths::partials.author')
+    @includeIf($info['name'] . '::partials.author')
 @endcomponent
 
 

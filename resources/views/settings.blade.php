@@ -1,13 +1,13 @@
 @extends('layouts.librenmsv1')
 @section('content')
     <div id="device-paths-flash-messages" style="margin-top:-12px; padding-bottom: 1em;">
-        @includeIf('device-paths::layouts.flash-messages')
+        @includeIf($info['name'] . '::layouts.flash-messages')
     </div>
 
     @component($info['name'] . '::layouts.panel')
         @includeIf($info['name'] . '::partials.author')
 
-        <form method="post" action="{{ route('device-paths.update', ['plugin' => $info['name']]) }}">
+        <form method="post" action="{{ route($info['name'] . '.update', ['plugin' => $info['name']]) }}">
             @csrf
 
             <div class="form-group">
