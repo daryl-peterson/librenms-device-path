@@ -10,22 +10,22 @@
  * @since       1.0.0
  */
 
+use App\Http\Controllers\PluginSettingsController;
 use Illuminate\Support\Facades\Route;
-
-/**
- * Plugin imports.
- */
-
-
 use DRP\DevicePaths\Controllers\PluginController;
-use const DRP\DevicePaths\PLUGIN_NAME;
+use DRP\DevicePaths\PluginConst;
 
-$plugin = PLUGIN_NAME;
+$plugin = PluginConst::PLUGIN_NAME;
 
 
 /**
- * Settings route
+ * Settings routes
  */
-Route::middleware(['web'])
-    ->get("plugin/settings/$plugin", [PluginController::class, 'settings'])
-    ->name("$plugin.settings");
+Route::middleware(['web', 'auth', 'can:plugin.admin'])->group(function () use ($plugin): void {
+    Route::get("plugin/$plugin/settings", [PluginController::class, 'settings'])
+        ->name("$plugin.settings");
+
+    Route::post('plugin/{plugin:plugin_name}/settings', [PluginSettingsController::class, 'update'])
+        ->where('plugin', $plugin)
+        ->name("$plugin.update");
+});

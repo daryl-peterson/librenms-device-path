@@ -7,7 +7,7 @@
     @component($info['name'] . '::layouts.panel')
         @includeIf($info['name'] . '::partials.author')
 
-        <form method="post">
+        <form method="post" action="{{ route('device-paths.update', ['plugin' => $info['name']]) }}">
             @csrf
 
             <div class="form-group">

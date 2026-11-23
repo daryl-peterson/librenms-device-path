@@ -15,6 +15,7 @@ namespace DRP\DevicePaths;
 
 use Throwable;
 use App\Models\Plugin;
+use DRP\DevicePaths\PluginConst;
 use DRP\DevicePaths\Log;
 
 /**
@@ -56,7 +57,7 @@ class PluginSettings {
 
     public static function forEditing(array $settings): array {
         if (!isset($settings['interval'])) {
-            $query = Plugin::versionTwo()->where('plugin_name', PLUGIN_NAME);
+            $query = Plugin::versionTwo()->where('plugin_name', PluginConst::PLUGIN_NAME);
             $settings = $query->getModel()->getConnection()->transaction(static function () use ($query, $settings): array {
                 $plugin = $query->lockForUpdate()->first();
                 if ($plugin === null) {
@@ -65,7 +66,7 @@ class PluginSettings {
 
                 $settings = (array) $plugin->settings;
                 if (!isset($settings['interval'])) {
-                    $settings['interval'] = PluginProvider::BUILD_INTERVAL;
+                    $settings['interval'] = PluginConst::BUILD_INTERVAL;
                     $plugin->settings = $settings;
                     $plugin->saveOrFail();
                 }

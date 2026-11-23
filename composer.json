@@ -17,10 +17,7 @@
     "autoload": {
         "psr-4": {
             "DRP\\DevicePaths\\": "src/"
-        },
-        "files": [
-            "src/constants.php"
-        ]
+        }
     },
     "extra": {
         "laravel": {

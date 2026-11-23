@@ -2,29 +2,13 @@
 
 namespace DRP\DevicePaths\Controllers;
 
-/**
- * Laravel imports.
- */
 
-use Illuminate\Contracts\Encryption\DecryptException;
-use Illuminate\Database\QueryException;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
-
-/**
- * Plugin imports.
- */
-
-use DRP\DevicePaths\Log;
+use DRP\DevicePaths\PluginConst;
 use DRP\DevicePaths\TraitHidePrivates;
 use DRP\DevicePaths\PluginData;
-use DRP\DevicePaths\PluginSettings;
 use DRP\DevicePaths\TraitValidateAdmin;
-use const DRP\DevicePaths\PLUGIN_NAME;
 
 /**
  * LibreNMS Device Paths Plugin Controller
@@ -50,7 +34,7 @@ class PluginController extends Controller {
      */
     public function __construct() {
         $this->info = PluginData::getInfo();
-        $this->plugin = PLUGIN_NAME;
+        $this->plugin = PluginConst::PLUGIN_NAME;
     }
 
 

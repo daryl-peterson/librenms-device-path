@@ -5,7 +5,7 @@ namespace DRP\DevicePaths\Hooks;
 use App\Models\Device;
 use App\Plugins\Hooks\DeviceOverviewHook;
 use DRP\DevicePaths\PluginProvider;
-use const DRP\DevicePaths\PLUGIN_TITLE;
+use DRP\DevicePaths\PluginConst;
 
 
 /**
@@ -41,7 +41,7 @@ class DeviceOverview extends DeviceOverviewHook {
         $groupTree = $group === null ? null : $tree . $group->id;
 
         return [
-            'title' => PLUGIN_TITLE,
+            'title' => PluginConst::PLUGIN_TITLE,
             'device'  => $device,
             'device_path' => $rels,
             'device_tree' => $deviceTree,

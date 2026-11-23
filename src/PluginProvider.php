@@ -4,6 +4,7 @@ namespace DRP\DevicePaths;
 
 use App\Models\Device;
 use App\Models\Plugin;
+
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
@@ -12,6 +13,8 @@ use LibreNMS\Interfaces\Plugins\Hooks\MenuEntryHook as MenuEntryHookInterface;
 use LibreNMS\Interfaces\Plugins\Hooks\SettingsHook as SettingsHookInterface;
 use LibreNMS\Interfaces\Plugins\Hooks\SinglePageHook;
 use LibreNMS\Interfaces\Plugins\PluginManagerInterface;
+
+use DRP\DevicePaths\PluginConst;
 use DRP\DevicePaths\Hooks\DeviceOverview;
 use DRP\DevicePaths\Hooks\Menu;
 use DRP\DevicePaths\Hooks\Page;
@@ -30,13 +33,8 @@ use DRP\DevicePaths\Log;
  */
 class PluginProvider extends ServiceProvider {
 
-    const PATH_KEY        = 'DEVP_';
-    const PATH_BUILD      = 'DEVP_BUILD';
-    const BUILD_INTERVAL  = 24;
-    const PATH_BUILD_TIME = 'DEVP_BUILD_TIME';
-
     private const DEFAULT_SETTINGS = [
-        'interval' => self::BUILD_INTERVAL,
+        'interval' => PluginConst::BUILD_INTERVAL,
         'force_build' => null,
     ];
 
@@ -46,13 +44,12 @@ class PluginProvider extends ServiceProvider {
      * @since 0.0.1
      */
     public function register(): void {
-        require_once __DIR__ . '/constants.php';
     }
 
     public function boot(PluginManagerInterface $manager): void {
         try {
 
-            $pluginName = PLUGIN_NAME;
+            $pluginName = PluginConst::PLUGIN_NAME;
 
             /*
             * Compatibility view path.
@@ -87,27 +84,6 @@ class PluginProvider extends ServiceProvider {
     }
 
     /**
-     * Get plugin information.
-     *
-     * @return array{name: string, title: string, author: string, image: string, build: string, ver: string, settings: string, plugin: Plugin|null}
-     *
-     * @version 1.0.0
-     * @todo Something awesome
-     */
-    public static function getInfo() {
-        return array(
-            'name'     => PLUGIN_NAME,
-            'title'    => PLUGIN_TITLE,
-            'author'   => PLUGIN_AUTHOR,
-            'image'    => PLUGIN_AUTHOR_IMAGE,
-            'build'    => self::PATH_BUILD_TIME,
-            'ver'      => PLUGIN_VER,
-            'settings' => route('plugin.settings', PLUGIN_NAME),
-            'plugin'   => self::getPlugin(),
-        );
-    }
-
-    /**
      * Build path for each device.
      *
      * @return void
@@ -134,8 +110,8 @@ class PluginProvider extends ServiceProvider {
 
             $interval = (int) $settings['interval'];
 
-            Cache::add(self::PATH_BUILD, PLUGIN_VER, now()->addHours($interval));
-            Cache::forever(self::PATH_BUILD_TIME, $duration);
+            Cache::add(PluginConst::PATH_BUILD, PluginConst::PLUGIN_VER, now()->addHours($interval));
+            Cache::forever(PluginConst::PATH_BUILD_TIME, $duration);
 
             $settings['force_build'] = null;
             $plugin->settings        = $settings;
@@ -152,7 +128,7 @@ class PluginProvider extends ServiceProvider {
      * @return void
      */
     public function checkBuild() {
-        $build = Cache::get(self::PATH_BUILD);
+        $build = Cache::get(PluginConst::PATH_BUILD);
 
         $plugin = self::getPlugin();
         if ($plugin?->plugin_active && ($build === null || ! empty($plugin->settings['force_build']))) {
@@ -187,7 +163,7 @@ class PluginProvider extends ServiceProvider {
      * @version 1.0.0
      */
     public function getPath(int $id, bool $force = false): array {
-        $keyCache = self::PATH_KEY . $id;
+        $keyCache = PluginConst::PATH_KEY . $id;
 
         if (! $force) {
             $path = Cache::get($keyCache);
@@ -233,6 +209,6 @@ class PluginProvider extends ServiceProvider {
      * @version 1.0.0
      */
     private static function getPlugin(): ?Plugin {
-        return Plugin::versionTwo()->where('plugin_name', PLUGIN_NAME)->first();
+        return Plugin::versionTwo()->where('plugin_name', PluginConst::PLUGIN_NAME)->first();
     }
 }

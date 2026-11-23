@@ -14,6 +14,7 @@
 namespace DRP\DevicePaths;
 
 use App\Models\Plugin as PluginModel;
+use DRP\DevicePaths\PluginConst;
 use DRP\DevicePaths\Log;
 use DRP\DevicePaths\PluginSettings;
 
@@ -47,12 +48,12 @@ class PluginData {
 
         $result = array(
             'info' => [
-                'name'     => PLUGIN_NAME,
-                'title'    => PLUGIN_TITLE,
-                'author'   => PLUGIN_AUTHOR,
-                'image'    => PLUGIN_AUTHOR_IMAGE,
-                'ver'      => PLUGIN_VER,
-                'build'    => PATH_BUILD_TIME
+                'name'     => PluginConst::PLUGIN_NAME,
+                'title'    => PluginConst::PLUGIN_TITLE,
+                'author'   => PluginConst::PLUGIN_AUTHOR,
+                'image'    => PluginConst::PLUGIN_AUTHOR_IMAGE,
+                'ver'      => PluginConst::PLUGIN_VER,
+                'build'    => PluginConst::PATH_BUILD_TIME
             ],
             'settings' => self::getSettings()
         );
@@ -67,11 +68,11 @@ class PluginData {
      * @version 0.0.1
      */
     public static function getPluginModel(): PluginModel|null {
-        $result = PluginModel::versionTwo()->where('plugin_name', PLUGIN_NAME)->first();
+        $result = PluginModel::versionTwo()->where('plugin_name', PluginConst::PLUGIN_NAME)->first();
 
         // Check if the plugin exists in the database.
         if (is_null($result)) {
-            Log::error('Plugin not found: ' . PLUGIN_NAME);
+            Log::error('Plugin not found: ' . PluginConst::PLUGIN_NAME);
             return null;
         }
         return $result;
@@ -91,6 +92,6 @@ class PluginData {
     }
 
     public static function getPluginName(): string {
-        return PLUGIN_NAME;
+        return PluginConst::PLUGIN_NAME;
     }
 }
