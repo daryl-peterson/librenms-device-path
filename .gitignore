@@ -1,1 +1,13 @@
 /vendor/
+.agents
+.aws
+.codex
+.docs
+.DS_Store
+.installed
+.trash
+.vscode
+.phpunit.*
+.test-*
+/composer.lock
+
