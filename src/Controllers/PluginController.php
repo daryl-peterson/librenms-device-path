@@ -55,8 +55,7 @@ class PluginController extends Controller {
 
 
     public function index(): View {
-
-        return view("$this->plugin::page");
+        return view("$this->plugin::page", $this->info);
     }
 
 
@@ -68,11 +67,6 @@ class PluginController extends Controller {
      */
     public function settings(): View {
         $this->validateAdmin();
-
-        return view("$this->plugin::settings", [
-            'info' => $this->info,
-            'plugin' => $this->plugin,
-            'settings' => PluginSettings::forEditing($this->info['settings']),
-        ]);
+        return view("$this->plugin::settings", $this->info);
     }
 }

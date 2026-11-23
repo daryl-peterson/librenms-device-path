@@ -1,12 +1,11 @@
 @extends('layouts.librenmsv1')
-
 @section('content')
     <div id="device-paths-flash-messages" style="margin-top:-12px; padding-bottom: 1em;">
-        @includeIf("$plugin::layouts.flash-messages")
+        @includeIf('device-paths::layouts.flash-messages')
     </div>
 
-    @component("$plugin::layouts.panel")
-        @includeIf("$plugin::partials.author")
+    @component($info['name'] . '::layouts.panel')
+        @includeIf($info['name'] . '::partials.author')
 
         <form method="post">
             @csrf

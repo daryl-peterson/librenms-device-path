@@ -2,11 +2,6 @@
 
 namespace DRP\DevicePaths;
 
-/**
- * Laravel and application imports.
- */
-
-
 use App\Models\Device;
 use App\Models\Plugin;
 use Illuminate\Support\Facades\Cache;
@@ -17,18 +12,11 @@ use LibreNMS\Interfaces\Plugins\Hooks\MenuEntryHook as MenuEntryHookInterface;
 use LibreNMS\Interfaces\Plugins\Hooks\SettingsHook as SettingsHookInterface;
 use LibreNMS\Interfaces\Plugins\Hooks\SinglePageHook;
 use LibreNMS\Interfaces\Plugins\PluginManagerInterface;
-use stdClass;
-
-/**
- * Plugin imports.
- */
-
 use DRP\DevicePaths\Hooks\DeviceOverview;
 use DRP\DevicePaths\Hooks\Menu;
 use DRP\DevicePaths\Hooks\Page;
 use DRP\DevicePaths\Hooks\Settings;
 use DRP\DevicePaths\Log;
-
 
 /**
  * LibreNMS Device Paths Plugin Service Provider.
@@ -86,7 +74,6 @@ class PluginProvider extends ServiceProvider {
             $pluginManager->publishHook($pluginName, MenuEntryHookInterface::class, Menu::class);
             $pluginManager->publishHook($pluginName, SinglePageHook::class, Page::class);
             $pluginManager->publishHook($pluginName, SettingsHookInterface::class, Settings::class);
-
             $pluginManager->publishHook($pluginName, DeviceOverviewHook::class, DeviceOverview::class);
         } catch (\Throwable $th) {
             Log::error("Error booting plugin: " . $th->getMessage());

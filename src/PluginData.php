@@ -13,19 +13,9 @@
 
 namespace DRP\DevicePaths;
 
-/**
- * Laravel and application imports.
- */
-
 use App\Models\Plugin as PluginModel;
-
-/**
- * Plugin imports.
- */
-
 use DRP\DevicePaths\Log;
 use DRP\DevicePaths\PluginSettings;
-use DRP\DevicePaths\PluginCache;
 
 /**
  * LibreNMS Device Paths Plugin.
@@ -40,16 +30,6 @@ use DRP\DevicePaths\PluginCache;
 class PluginData {
 
     /**
-     * Constructor.
-     *
-     * @since 0.0.1
-     */
-    public function __construct() {
-        # Code Here
-    }
-
-
-    /**
      * Get plugin information.
      *
      * @return array{
@@ -59,32 +39,24 @@ class PluginData {
      *  ver: '',
      *  image: '',
      *  settings: array,
-     *  dbStatus: array{
-     *    ready: bool,
-     *    error: string|null
-     *  },
      * }
      *
      * @version 0.0.1
      */
     public static function getInfo() {
-        //$dbError = PluginCache::get(CACHE_DB_ERROR);
 
         $result = array(
-            'name'     => PLUGIN_NAME,
-            'title'    => PLUGIN_TITLE,
-            'author'   => PLUGIN_AUTHOR,
-            'ver'      => PLUGIN_VER,
-            'image'    => PLUGIN_AUTHOR_IMAGE,
-            'settings' => self::getSettings(),
-            /*
-            'dbStatus'  => [
-                'ready' => !$dbError,
-                'error' => $dbError
+            'info' => [
+                'name'     => PLUGIN_NAME,
+                'title'    => PLUGIN_TITLE,
+                'author'   => PLUGIN_AUTHOR,
+                'image'    => PLUGIN_AUTHOR_IMAGE,
+                'ver'      => PLUGIN_VER,
+                'build'    => PATH_BUILD_TIME
             ],
-            */
+            'settings' => self::getSettings()
         );
-
+        Log::error('Plugin info: ', $result);
         return $result;
     }
 
@@ -112,8 +84,9 @@ class PluginData {
      * @version 0.0.1
      */
     public static function getSettings(): array {
+
         $obj = new PluginSettings();
-        $settings = $obj->all();
+        $settings = $obj->settings;
         return $settings ?? [];
     }
 

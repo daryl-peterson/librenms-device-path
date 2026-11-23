@@ -16,6 +16,7 @@ namespace DRP\DevicePaths\Hooks;
 
 use App\Plugins\Hooks\PageHook;
 use DRP\DevicePaths\PluginProvider;
+use DRP\DevicePaths\PluginData;
 
 /**
  * Page Hook for Device Paths Plugin
@@ -29,8 +30,7 @@ use DRP\DevicePaths\PluginProvider;
  */
 class Page extends PageHook {
     public function data(): array {
-        return [
-            'info' => PluginProvider::getInfo(),
-        ];
+
+        return PluginData::getInfo();
     }
 }
